@@ -29,7 +29,7 @@ class App extends React.Component {
   // update book shelf
   updateShelf = (book, shelf) => {
     BooksAPI.update(book, shelf).then(res => {
-      this.getAllBooks();
+      this.FetchAllBooks();
     });
   };
 
