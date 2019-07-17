@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import Book from "./Book";
 import PropTypes from "prop-types";
 
 class SearchPage extends Component {
@@ -9,8 +8,8 @@ class SearchPage extends Component {
     this.QueryChange = this.QueryChange.bind(this);
   }
   static propTypes = {
-    searchedBooks: PropTypes.array.isRequired,
-    updateShelf: PropTypes.func.isRequired
+    searchedBooks: PropTypes.array,
+    updateShelf: PropTypes.fun
   };
 
   QueryChange = query => {
@@ -32,17 +31,6 @@ class SearchPage extends Component {
               onChange={event => this.QueryChange(event.target.value)}
             />
           </div>
-        </div>
-        <div className="search-books-results">
-          <ol className="books-grid">
-            {this.props.searchedBooks.map((book, index) => (
-              <Book
-                key={index}
-                book={book}
-                onUpdateShelf={this.props.updateShelf}
-              />
-            ))}
-          </ol>
         </div>
       </div>
     );

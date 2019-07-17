@@ -4,6 +4,7 @@ import * as BooksAPI from "./BooksAPI";
 import "./App.css";
 import BooksList from "./BooksList";
 import SearchPage from "./SearchPage";
+import List from "./List";
 
 class App extends React.Component {
   // initial state of the app
@@ -20,35 +21,28 @@ class App extends React.Component {
 
   handelSearchString(query) {
     this.setState({
-      searchedBooks: this.state.books.filter(book => {
-        return (
-          book.title.toLowerCase().includes(query.toLowerCase()) ||
-          book.authors
-            .join()
-            .toLowerCase()
-            .includes(query.toLowerCase())
-        );
-      }),
       searchString: query
+    });
+    BooksAPI.search(query, 20).then(res => {
+      this.setState({ searchedBooks: res });
     });
   }
 
   // Will fetch all books before it mounts on the dom
   componentDidMount() {
     BooksAPI.getAll().then(books => {
-      this.setState({ books, searchedBooks: books });
+      this.setState({ books });
     });
   }
-
-  // fetch all books function
-  // FetchAllBooks = () => {
-
-  // };
 
   // update book shelf
   updateShelf = (book, shelf) => {
     BooksAPI.update(book, shelf).then(res => {
-      this.FetchAllBooks();
+      BooksAPI.getAll().then(newBook => {
+        return this.setState({
+          books: newBook
+        });
+      });
     });
   };
 
@@ -60,10 +54,12 @@ class App extends React.Component {
           render={() => (
             <div>
               <SearchPage
-                searchedBooks={this.state.searchedBooks}
-                updateShelf={this.updateShelf}
                 handelSearchString={this.handelSearchString}
                 searchString={this.state.searchString}
+              />
+              <List
+                searchedBooks={this.state.searchedBooks}
+                updateShelf={this.updateShelf}
               />
             </div>
           )}
