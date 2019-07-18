@@ -10,6 +10,8 @@ class BooksList extends Component {
   };
 
   render() {
+    // console.log("bookList props", this.props);
+
     const { books } = this.props;
 
     let currentlyReadingBooks = books.filter(
@@ -18,6 +20,10 @@ class BooksList extends Component {
 
     let wantToReadBooks = books.filter(book => book.shelf === "wantToRead");
     let readBooks = books.filter(book => book.shelf === "read");
+
+    // console.log("currentlyReadingBooks", currentlyReadingBooks);
+    // console.log("wantToReadBooks", wantToReadBooks);
+    // console.log("readBooks", readBooks);
 
     return (
       <div className="list-books">

@@ -11,24 +11,28 @@ class Book extends Component {
   };
 
   handleUpdating = (evt, book) => {
+    // console.log("handleUpdating", evt, book);
     this.props.onUpdateShelf(book, evt.target.value);
     this.setState({ shelf: evt.target.value });
   };
 
   render() {
     const { book } = this.props;
+    // console.log(book.imageLinks.thumbnail);
 
     return (
       <div className="book">
         <div className="book-top">
-          <div
-            className="book-cover"
-            style={{
-              width: 128,
-              height: 193,
-              backgroundImage: `url(${book.imageLinks.thumbnail})`
-            }}
-          />
+          {book.imageLinks && (
+            <div
+              className="book-cover"
+              style={{
+                width: 128,
+                height: 193,
+                backgroundImage: `url(${book.imageLinks.thumbnail})`
+              }}
+            />
+          )}
           <div className="book-shelf-changer">
             <select
               defaultValue={this.state.shelf}
@@ -37,6 +41,7 @@ class Book extends Component {
               <option value="none" disabled>
                 Move to...
               </option>
+              <option hidden="hidden">hidden</option>
               <option value="currentlyReading">Currently Reading</option>
               <option value="wantToRead">Want to Read</option>
               <option value="read">Read</option>

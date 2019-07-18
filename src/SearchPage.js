@@ -1,16 +1,11 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
 
 class SearchPage extends Component {
   constructor(props) {
     super(props);
     this.QueryChange = this.QueryChange.bind(this);
   }
-  static propTypes = {
-    searchedBooks: PropTypes.array,
-    updateShelf: PropTypes.fun
-  };
 
   QueryChange = query => {
     this.props.handelSearchString(query);

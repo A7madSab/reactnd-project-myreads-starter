@@ -23,8 +23,14 @@ class App extends React.Component {
     this.setState({
       searchString: query
     });
+
     BooksAPI.search(query, 20).then(res => {
-      this.setState({ searchedBooks: res });
+      if (query === "") {
+        // console.log("q is empty");
+        this.setState({ searchedBooks: res });
+      } else {
+        this.setState({ searchedBooks: res });
+      }
     });
   }
 
@@ -38,6 +44,7 @@ class App extends React.Component {
   // update book shelf
   updateShelf = (book, shelf) => {
     BooksAPI.update(book, shelf).then(res => {
+      console.log(res);
       BooksAPI.getAll().then(newBook => {
         return this.setState({
           books: newBook
@@ -54,6 +61,7 @@ class App extends React.Component {
           render={() => (
             <div>
               <SearchPage
+                SearchPage={this.SearchPage}
                 handelSearchString={this.handelSearchString}
                 searchString={this.state.searchString}
               />
