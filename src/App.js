@@ -1,88 +1,74 @@
 import React from "react";
-import { Route } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
+import { Route } from "react-router-dom";
+import SearchBooks from "./components/SearchBooks";
+import ListBooks from "./components/ListBooks";
 import "./App.css";
-import BooksList from "./BooksList";
-import SearchPage from "./SearchPage";
-import List from "./List";
 
-class App extends React.Component {
-  // initial state of the app
-  constructor(props) {
-    super(props);
-    this.state = {
-      books: [],
-      searchedBooks: [],
-      searchString: ""
-    };
-    this.handelSearchString = this.handelSearchString.bind(this);
-    this.updateShelf = this.updateShelf.bind(this);
-  }
+class BooksAppNew extends React.Component {
+  state = {
+    books: {
+      currentlyReading: [],
+      wantToRead: [],
+      read: []
+    }
+  };
 
-  handelSearchString(query) {
-    this.setState({
-      searchString: query
-    });
-
-    BooksAPI.search(query, 20).then(res => {
-      if (query === "") {
-        // console.log("q is empty");
-        this.setState({ searchedBooks: res });
-      } else {
-        this.setState({ searchedBooks: res });
-      }
-    });
-  }
-
-  // Will fetch all books before it mounts on the dom
   componentDidMount() {
-    BooksAPI.getAll().then(books => {
-      this.setState({ books });
-    });
+    this.getBooks();
   }
 
-  // update book shelf
-  updateShelf = (book, shelf) => {
-    BooksAPI.update(book, shelf).then(res => {
-      console.log(res);
-      BooksAPI.getAll().then(newBook => {
-        return this.setState({
-          books: newBook
-        });
+  getBooks() {
+    BooksAPI.getAll().then(books => {
+      this.setState({
+        books: {
+          currentlyReading: books.filter(book => {
+            return book.shelf === "currentlyReading";
+          }),
+          wantToRead: books.filter(book => {
+            return book.shelf === "wantToRead";
+          }),
+          read: books.filter(book => {
+            return book.shelf === "read";
+          })
+        }
       });
     });
-  };
+  }
+
+  moveBook(book, newShelf) {
+    if (newShelf !== book.shelf) {
+      BooksAPI.update(book, newShelf).then(response => {
+        this.getBooks();
+      });
+    }
+  }
 
   render() {
     return (
       <div className="app">
         <Route
-          path="/search"
+          exact
+          path={process.env.PUBLIC_URL + "/"}
           render={() => (
-            <div>
-              <SearchPage
-                SearchPage={this.SearchPage}
-                handelSearchString={this.handelSearchString}
-                searchString={this.state.searchString}
-              />
-              <List
-                searchedBooks={this.state.searchedBooks}
-                updateShelf={this.updateShelf}
-              />
-            </div>
+            <ListBooks
+              books={this.state.books}
+              onMoveBook={(book, newShelf) => {
+                this.moveBook(book, newShelf);
+              }}
+            />
           )}
         />
-
         <Route
           exact
-          path="/"
+          path={process.env.PUBLIC_URL + "/search"}
           render={() => (
-            <div>
-              <BooksList
-                books={this.state.books}
-                updateShelf={this.updateShelf}
-              />
-            </div>
+            <SearchBooks
+              shelfBooks={this.state.books}
+              onMoveBook={(book, newShelf) => {
+                this.moveBook(book, newShelf);
+              }}
+            />
           )}
         />
       </div>
@@ -90,4 +76,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default BooksAppNew;
